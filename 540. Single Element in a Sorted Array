@@ -1,0 +1,29 @@
+class Solution(object):
+    def singleNonDuplicate(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: int
+        """
+        start,end = 0, len(nums) - 1
+        while start < end:
+            mid = (start + end)/2
+            if nums[mid] == nums[mid+1]:
+                if len(nums[start:mid]) % 2 == 1:
+                    end = mid - 1
+                else:
+                    start = mid + 2
+            elif nums[mid] == nums[mid-1]:
+                if len(nums[start:mid-1]) % 2 == 1:
+                    end = mid - 2
+                else:
+                    start = mid + 1
+            else:
+                return nums[start]
+        return nums[start]
+        
+ 解题思路：binary search查找SE（single element）
+ 从中间查找，如果mid=mid+1，则SE位于[start,mid] [mid+2,end]之间的为奇数个的list中
+ 同理，如果mid=mid-1，则SE位于[start,mid-1] [mid+1,end]之间的奇数个的list中，循环查找，直至start=end，找到SE
+ 
+ PS：hi=len(nums)-1这里已然指向了最后一个元素，跟list左闭右开不一样，只有一个元素的时候记得返回第一个元素
+ 
