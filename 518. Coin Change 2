@@ -1,0 +1,19 @@
+class Solution(object):
+    def change(self, amount, coins):
+        """
+        :type amount: int
+        :type coins: List[int]
+        :rtype: int
+        """
+        d = [1] + [0]*amount
+        for i in range(0,len(coins)):
+            for j in range(0,amount):
+                current_num = j + coins[i]
+                if current_num <= amount:               
+                    d[current_num] += d[j]
+        return d[-1]
+典型的DP问题
+d[j] 表示当前所用的coins下，有多少种方案
+核心子问题求解：当我们用了coins表中前i个coin的时候，这时所该有的方案为左右子问题d[amount-coins[i]]的解的和。
+从程序的理解，就是，每当新加入一个新的coin币种，给全局带来的变化的一个规律
+这样写避免了3=1+2 3=2+1被重复写的情况
