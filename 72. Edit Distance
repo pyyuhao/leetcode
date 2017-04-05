@@ -1,0 +1,31 @@
+class Solution(object):
+    def minDistance(self, word1, word2):
+        """
+        :type word1: str
+        :type word2: str
+        :rtype: int
+        """
+        la,lb = len(word1),len(word2)
+        if la == 0 or lb == 0:
+            return la+lb
+        d = [[0 for j in range(lb+1)] for i in range(la+1)]
+        for i in range(0,la+1):
+            d[i][0] = i
+        for j in range(0,lb+1):
+            d[0][j] = j
+        for i in range(1,la+1):
+            for j in range(1,lb+1):
+                if word1[i-1] == word2[j-1]:
+                    d[i][j] = d[i-1][j-1]
+                else:
+                    d[i][j] = self.getmin(d[i][j-1],d[i-1][j],d[i-1][j-1]) + 1
+        return d[la][lb]
+    
+    def getmin(self,a,b,c):
+        d = a if a<=b else b
+        return c if c<=d else d
+ 
+ 典型的动态规划DP问题，Bioinformatics的一个最最基本的算法Simth-Watermen算法的核心。
+ 注意初始化，最开始一行，最开始一列都是要先初始化的，还you为0长度的特殊字符串，以及不用deepcopy的坑。
+ 核心就是子问题的解 d[i][j] = self.getmin(d[i][j-1],d[i-1][j],d[i-1][j-1]) + 1
+ DP问题和背包问题多做做题，就能明白的更清楚。
