@@ -1,0 +1,56 @@
+这题感觉跟什么博弈论的好像，大体上分为两种解题方案（Not quite clearly）
+
+总体上，都是代表第一个人最优为+，第二个人最优为-，如果最后结果为正数，表示第一个人win，反之，第二个人win
+需要注意的是，第一个人是最优，第二个人也是最优，感觉这类博弈论的问题都可以用DP来定义
+
+1、递归 最直白的，但是我自己并没有想到要用一个dict来存结果,这个dict的key是tuple结构
+
+  resut[tuple(nums)] = max(nums[0]-solve(nums[1:]),nums[-1]-solve(nums[:-1]))
+  
+  最优子结构差不多就是这样，result[tuple[nums[i:j]]]表示i到j之间的针对第一个人的最优
+  
+  代码：
+  class Solution(object):
+    def PredictTheWinner(self, nums):
+        """
+        :type nums: List[int]
+        :rtype: bool
+        """
+        cache = dict()
+        def solve(nums):
+            if len(nums) <= 1: return sum(nums)
+            tnums = tuple(nums)
+            if tnums in cache: return cache[tnums]
+            cache[tnums] = max(nums[0] - solve(nums[1:]), nums[-1] - solve(nums[:-1]))
+            return cache[tnums]
+        return solve(nums) >= 0
+        
+  2、DP 讲道理自己没找到怎么最优子结构，粘一下别人的代码先吧，回头自己研究
+  dp[i][j]表示原数组中从i到j的这么多数中，按照游戏规则，某个玩家所能获得的最大分数。 
+  假设这个分数此时属于palyer1，那么dp[i+1][j]或者dp[i][j-1]表示player2玩家所能获得的最大分数。
+  因为对于player1来讲，他第一次选择要么是第i个数，要么是第j个数，所以对于player2来讲，就分两种情况取最大。
+
+  另外我们设从i到j的所有数的和是sum[i,j]，则可以得到递推公式：（动态规划最明显的标识） 
+  dp[i][j]=max(sum[i+1][j]-dp[i+1][j]+nums[i], sum[i][j-1]-dp[i][j-1]+nums[j]) 
+  
+  public class Solution {  
+    public boolean PredictTheWinner(int[] nums) {  
+        if (nums == null || nums.length == 0) {  
+            return false;  
+        }  
+        int[][] dp = new int[nums.length][nums.length];  
+        int sum = 0;  
+        for (int num : nums) {  
+            sum += num;  
+        }  
+        for (int i = 0; i < nums.length; i++) {  
+            dp[i][i] = nums[i];  
+        }  
+        for (int i = nums.length - 2; i >= 0; i--) {  
+            for (int j = i + 1; j < nums.length; j++) {  
+                dp[i][j] = Math.max(nums[i] - dp[i + 1][j], nums[j] - dp[i][j - 1]);  
+            }  
+        }  
+        return dp[0][nums.length - 1] >= 0;  
+    }  
+}  
